@@ -8,9 +8,10 @@ EXE_FILE := mtkernel_3
 # Specify only one target name
 #TARGET := _IOTE_M367_
 #TARGET := _IOTE_RX231_
-TARGET := _IOTE_STM32L4_
+#TARGET := _IOTE_STM32L4_
 #TARGET := _IOTE_RZA2M_
-TARGET := _NUCLEO_H723_
+#TARGET := _NUCLEO_H723_
+TARGET := _PICO_RP2040_
 
 RM := rm -rf
 
@@ -43,6 +44,9 @@ endif
 ifeq ($(TARGET), _NUCLEO_H723_)
 include nucleo_h723.mk
 endif
+ifeq ($(TARGET), _PICO_RP2040_)
+include pico_rp2040.mk
+endif
 
 -include mtkernel_3/app_program/subdir.mk
 
@@ -65,11 +69,17 @@ $(EXE_FILE).elf: $(OBJS)
 	@echo 'Linker: $@'
 	$(LINK)  $(LFLAGS) -T $(LNKFILE) -Wl,-Map,"$(EXE_FILE).map" -o "$(EXE_FILE).elf" $(OBJS)
 	@echo 'Finished building target: $@'
+ifneq ($(SIZE),)
+	$(SIZE) $(EXE_FILE).elf
+endif
+ifneq ($(E2U),)
+	$(E2U) $(EXE_FILE).elf $(EXE_FILE).uf2
+endif
 	@echo ' '
 
 # Other EXE_FILEs
 clean:
-	-$(RM) $(OBJS) $(SECONDARY_SIZE) $(ASM_DEPS) $(S_UPPER_DEPS) $(C_DEPS) $(EXE_FILE).elf
+	-$(RM) $(OBJS) $(SECONDARY_SIZE) $(ASM_DEPS) $(S_UPPER_DEPS) $(C_DEPS) $(EXE_FILE).elf $(EXE_FILE).map
 	-@echo ' '
 
 .PHONY: all clean dependents

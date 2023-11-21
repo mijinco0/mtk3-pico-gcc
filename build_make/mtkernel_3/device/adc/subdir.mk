@@ -33,3 +33,7 @@ endif
 ifeq ($(TARGET), _NUCLEO_H723_)
 -include mtkernel_3/device/adc/sysdepend/stm32h7/subdir.mk
 endif
+
+ifeq ($(TARGET), _PICO_RP2040_)
+-include mtkernel_3/device/adc/sysdepend/rp2040/subdir.mk
+endif
